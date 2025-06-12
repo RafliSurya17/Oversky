@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oversky - Online Distro</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* CSS Custom Properties */
+    :root {
+      --color-black: #0a0a0a;
+      --color-white: #fefefe;
+      --color-gray-light: #e0e0e0;
+      --color-gray-mid: #939393;
+      --color-gray-dark: #2e2e2e;
+      --font-primary: 'Poppins', sans-serif;
+
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --radius: 0.75rem;
+      --shadow-light: 0 4px 12px rgba(255 255 255 / 0.1);
+      --shadow-dark: 0 6px 20px rgba(0 0 0 / 0.8);
+      --container-max-width: 1200px;
+    }
+
+    /* Reset and base styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--color-black);
+      color: var(--color-white);
+      font-family: var(--font-primary);
+      font-size: 18px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+    }
+
+    a {
+      color: var(--color-white);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    a:hover,
+    a:focus {
+      color: var(--color-gray-light);
+      outline: none;
+    }
+
+    /* Container for consistent horizontal padding */
+    .container {
+      width: 90%;
+      max-width: var(--container-max-width);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Header Styles */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--color-black);
+      border-bottom: 1px solid var(--color-gray-dark);
+      backdrop-filter: saturate(180%) blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.75rem;
+      letter-spacing: 0.05em;
+      user-select: none;
+      cursor: default;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-links li a {
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.25rem 0;
+      position: relative;
+      transition: color var(--transition);
+    }
+    .nav-links li a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0%;
+      height: 2px;
+      background: var(--color-white);
+      transition: width var(--transition);
+    }
+    .nav-links li a:hover::after,
+    .nav-links li a:focus::after {
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 6rem 0 5rem 0;
+      text-align: center;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0.03em;
+      margin: 0 0 1rem 0;
+      color: var(--color-white);
+      text-shadow: 0 4px 8px rgba(255 255 255 / 0.15);
+    }
+    .hero p {
+      font-weight: 400;
+      font-size: 1.25rem;
+      color: var(--color-gray-light);
+      margin-bottom: 2.5rem;
+      user-select: none;
+    }
+    .btn-primary {
+      background: var(--color-white);
+      color: var(--color-black);
+      padding: 1rem 2.5rem;
+      font-weight: 600;
+      font-size: 1.125rem;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255 255 255 / 0.4);
+      transition: transform var(--transition), box-shadow var(--transition);
+      user-select: none;
+    }
+    .btn-primary:hover,
+    .btn-primary:focus {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255 255 255 / 0.7);
+      outline: none;
+    }
+
+    /* Products Section */
+    section.products {
+      padding: 4rem 0 6rem 0;
+      max-width: var(--container-max-width);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    section.products h2 {
+      font-weight: 700;
+      font-size: 2rem;
+      margin-bottom: 3rem;
+      text-align: center;
+      color: var(--color-white);
+      user-select: none;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+    }
+    .product-card {
+      background: var(--color-gray-dark);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-dark);
+      color: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .product-card:hover,
+    .product-card:focus-within {
+      transform: scale(1.03);
+      box-shadow: 0 10px 25px rgba(255 255 255 / 0.25);
+      outline: none;
+    }
+    .product-image {
+      width: 100%;
+      border-radius: var(--radius) var(--radius) 0 0;
+      object-fit: cover;
+      aspect-ratio: 4 / 3;
+      user-select: none;
+      background: #111;
+    }
+    .product-info {
+      padding: 1.5rem 1.75rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .product-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin: 0 0 0.5rem 0;
+      user-select: text;
+    }
+    .product-description {
+      font-weight: 400;
+      font-size: 1rem;
+      color: var(--color-gray-light);
+      flex-grow: 1;
+      user-select: text;
+    }
+    .product-price {
+      font-weight: 600;
+      font-size: 1.125rem;
+      margin-top: 1rem;
+      color: var(--color-white);
+      user-select: none;
+    }
+		.btn-buy1 {
+		  margin-top: 1.5rem;
+		  background: transparent;
+		  color: var(--color-white);
+		  border: 2px solid var(--color-white);
+		  border-radius: var(--radius);
+		  padding: 0.75rem 1.5rem;
+		  font-weight: 500;
+		  font-size: 1rem;
+		  cursor: pointer;
+		  transition: background-color var(--transition), color var(--transition), transform var(--transition);
+		  align-self: flex-start;
+		  user-select: none;
+		}
+		.btn-buy1:hover,
+		.btn-buy:focus {
+		  background-color: var(--color-white);
+		  color: var(--color-black);
+		  transform: scale(1.05);
+		  outline: none;
+		}
+	
+		.btn-buy2 {
+		  margin-top: 1.5rem;
+		  background: transparent;
+		  color: var(--color-white);
+		  border: 2px solid var(--color-white);
+		  border-radius: var(--radius);
+		  padding: 0.75rem 1.5rem;
+		  font-weight: 500;
+		  font-size: 1rem;
+		  cursor: pointer;
+		  transition: background-color var(--transition), color var(--transition), transform var(--transition);
+		  align-self: flex-start;
+		  user-select: none;
+		}
+		.btn-buy2:hover,
+		.btn-buy2:focus {
+		  background-color: var(--color-white);
+		  color: var(--color-black);
+		  transform: scale(1.05);
+		  outline: none;
+		}
+
+		.btn-buy3 {
+		  margin-top: 1.5rem;
+		  background: transparent;
+		  color: var(--color-white);
+		  border: 2px solid var(--color-white);
+		  border-radius: var(--radius);
+		  padding: 0.75rem 1.5rem;
+		  font-weight: 500;
+		  font-size: 1rem;
+		  cursor: pointer;
+		  transition: background-color var(--transition), color var(--transition), transform var(--transition);
+		  align-self: flex-start;
+		  user-select: none;
+		}
+		.btn-buy3:hover,
+		.btn-buy3:focus {
+		  background-color: var(--color-white);
+		  color: var(--color-black);
+		  transform: scale(1.05);
+		  outline: none;
+		}
+		
+		.btn-buy4 {
+		  margin-top: 1.5rem;
+		  background: transparent;
+		  color: var(--color-white);
+		  border: 2px solid var(--color-white);
+		  border-radius: var(--radius);
+		  padding: 0.75rem 1.5rem;
+		  font-weight: 500;
+		  font-size: 1rem;
+		  cursor: pointer;
+		  transition: background-color var(--transition), color var(--transition), transform var(--transition);
+		  align-self: flex-start;
+		  user-select: none;
+		}
+		.btn-buy4:hover,
+		.btn-buy4:focus {
+		  background-color: var(--color-white);
+		  color: var(--color-black);
+		  transform: scale(1.05);
+		  outline: none;
+		}
+		
+    /* Footer */
+    footer {
+      background: var(--color-black);
+      border-top: 1px solid var(--color-gray-dark);
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+      color: var(--color-gray-mid);
+      user-select: none;
+    }
+
+    /* Responsive typography */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      .btn-primary {
+        padding: 0.9rem 2rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <nav class="container" aria-label="Primary navigation">
+      <div class="logo" aria-label="Oversky logo">Oversky</div>
+      <ul class="nav-links" role="menubar" aria-orientation="horizontal">
+        <li role="none"><a href="#" role="menuitem" tabindex="0">Home</a></li>
+        <li role="none"><a href="#" role="menuitem" tabindex="0">Products</a></li>
+        <li role="none"><a href="#" role="menuitem" tabindex="0">About</a></li>
+        <li role="none"><a href="#" role="menuitem" tabindex="0">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" role="region" aria-labelledby="hero-heading">
+      <h1 id="hero-heading">Oversky - Your Premium Online Distro</h1>
+      <p>Explore exclusive apparel, streetwear, and curated style to elevate your wardrobe.</p>
+      <button class="btn-primary" aria-label="Shop Now">Shop Now</button>
+    </section>
+
+    <section class="products" role="region" aria-labelledby="products-heading">
+      <h2 id="products-heading">Featured Products</h2>
+      <div class="product-grid">
+        <article class="product-card" tabindex="0" aria-labelledby="product1-title" aria-describedby="product1-desc product1-price">
+          <img src="88.jpg" alt="Oversky 88" class="product-image" loading="lazy" />
+          <div class="product-info">
+            <h3 id="product1-title" class="product-title">Oversky 88</h3>
+            <p id="product1-desc" class="product-description">Dark color combination that will make you look cooler when you wear it.</p>
+            <div id="product1-price" class="product-price">Rp 125.000</div>
+            <button class="btn-buy1" aria-label="Buy Oversky Black Hoodie">Buy Now</button>
+          </div>
+        </article>
+
+        <article class="product-card" tabindex="0" aria-labelledby="product2-title" aria-describedby="product2-desc product2-price">
+          <img src="F4 blkng.png" alt="Oversky fantastic" class="product-image" loading="lazy" />
+          <div class="product-info">
+            <h3 id="product2-title" class="product-title">Oversky Fantastic</h3>
+            <p id="product2-desc" class="product-description">The combination of blue and white makes it an elegant item to own.</p>
+            <div id="product2-price" class="product-price">Rp 130.000</div>
+            <button class="btn-buy2" aria-label="Buy Oversky White Tee">Buy Now</button>
+          </div>
+        </article>		
+
+        <article class="product-card" tabindex="0" aria-labelledby="product3-title" aria-describedby="product3-desc product3-price">
+          <img src="music blkng.jpg" alt="Oversky snapback cap" class="product-image" loading="lazy" />
+          <div class="product-info">
+            <h3 id="product3-title" class="product-title">Oversky Music</h3>
+            <p id="product3-desc" class="product-description">The combination of green and white makes the user look brighter when wearing it, suitable for those who like music.</p>
+            <div id="product3-price" class="product-price">Rp 135.000</div>
+            <button class="btn-buy3" aria-label="Buy Oversky Snapback Cap">Buy Now</button>
+          </div>
+        </article>
+
+        <article class="product-card" tabindex="0" aria-labelledby="product4-title" aria-describedby="product4-desc product4-price">
+          <img src="Imagination blkng.jpg" alt="Oversky denim jacket" class="product-image" loading="lazy" />
+          <div class="product-info">
+            <h3 id="product4-title" class="product-title">Oversky Imagination</h3>
+            <p id="product4-desc" class="product-description">A combination of different colors that will be attractive when wearing it.Bring Your Imagination To The Sky.</p>
+            <div id="product4-price" class="product-price">Rp 130.000</div>
+            <button class="btn-buy4" aria-label="Buy Oversky Denim Jacket">Buy Now</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    &copy; 2025 Oversky. All rights reserved.
+  </footer>
+  
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Tombol produk 1 → Order1.html
+    const btn1 = document.querySelector('.btn-buy1');
+    if (btn1) btn1.addEventListener('click', () => window.location.href = 'Order1.html');
+
+    // Tombol produk 2 → Order2.html
+    const btn2 = document.querySelector('.btn-buy2');
+    if (btn2) btn2.addEventListener('click', () => window.location.href = 'Order2.html');
+
+    // Tombol produk 3 → Order3.html
+    const btn3 = document.querySelector('.btn-buy3');
+    if (btn3) btn3.addEventListener('click', () => window.location.href = 'Order3.html');
+
+    // Tombol produk 4 → Order4.html
+    const btn4 = document.querySelector('.btn-buy4');
+    if (btn4) btn4.addEventListener('click', () => window.location.href = 'Order4.html');
+  });
+</script>
+  
+</body>
+</html>
+
