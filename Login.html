@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Oversky - Black &amp; White Responsive</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif, Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+  a:hover,
+  a:focus {
+    text-decoration: underline;
+  }
+
+  /* Layout */
+  header, footer {
+    background: #111;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  header h1 {
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: 0.12em;
+    user-select: none;
+  }
+
+  nav.desktop-nav {
+    display: none;
+  }
+
+  nav.desktop-nav a {
+    margin-left: 2rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  footer {
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    gap: 1rem;
+  }
+  footer .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 128px); /* header + footer approximation */
+  }
+  
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Welcome Section */
+  .welcome-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.25rem;
+  }
+
+  .welcome-section h2 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+  }
+
+  .welcome-section p {
+    max-width: 640px;
+    color: #bbb;
+    font-weight: 400;
+    font-size: 1.15rem;
+  }
+
+  .btn-primary {
+    max-width: max-content;
+    background-color: #fff;
+    color: #000;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus {
+    background-color: #ddd;
+    outline: none;
+  }
+
+  /* Sign In Section */
+  .sign-in-section {
+    background: rgba(255 255 255 / 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 400px;
+    box-shadow: 0 8px 24px rgba(255 255 255 / 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sign-in-section h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  label {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    background-color: rgba(255 255 255 / 0.07);
+    color: #fff;
+    transition: background-color 0.3s ease;
+    outline-offset: 2px;
+  }
+
+  input[type="text"]::placeholder,
+  input[type="password"]::placeholder {
+    color: #aaa;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    background-color: rgba(255 255 255 / 0.15);
+    outline: 2px solid #fff;
+    color: #fff;
+  }
+
+  .btn-submit {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 0.85rem 1.75rem;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    user-select: none;
+    margin-top: 0.5rem;
+  }
+  .btn-submit:hover,
+  .btn-submit:focus {
+    background-color: #ddd;
+    outline: none;
+  }
+
+  /* Social Icons */
+  .social-icons {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+
+  .social-icons a {
+    color: #fff;
+    font-size: 1.8rem;
+    transition: color 0.3s ease;
+  }
+  .social-icons a:hover,
+  .social-icons a:focus {
+    color: #bbb;
+    outline: none;
+  }
+
+  /* Responsive layout */
+  @media (min-width: 768px) {
+    nav.desktop-nav {
+      display: flex;
+      align-items: center;
+    }
+
+    main {
+      padding: 4rem 2rem;
+    }
+
+    .content-wrapper {
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 4rem;
+    }
+
+    .welcome-section {
+      flex-basis: 60%;
+      padding-right: 2rem;
+    }
+
+    .sign-in-section {
+      flex-basis: 36%;
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .welcome-section h2 {
+      font-size: 2rem;
+    }
+
+    .btn-primary {
+      width: 100%;
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    .sign-in-section {
+      padding: 1.5rem 1.25rem;
+    }
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body>
+<header role="banner" aria-label="Site header">
+  <div class="container">
+    <h1>OVERSKY</h1>
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="#welcome">Welcome</a>
+      <a href="#signin">Sign In</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main role="main">
+  <div class="content-wrapper container">
+    <section class="welcome-section" id="welcome" aria-label="Welcome message">
+      <h2>Welcome to Oversky</h2>
+      <p>
+        Shine Like The Sky and Bring Your Imagination To The Sky
+    </section>
+
+    <section class="sign-in-section" id="signin" aria-labelledby="signin-title" role="form" tabindex="-1">
+      <h3 id="signin-title">Sign in</h3>
+     
+	 <form id="login-form">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required /><br><br>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required /><br><br>
+
+        <button type="submit" class="btn-submit">Login</button>
+      </form>
+	  
+	   <script>
+    document.getElementById('login-form').addEventListener('submit', function (event) {
+      event.preventDefault(); // Cegah reload halaman
+
+      // Anda bisa tambahkan validasi di sini jika perlu
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (username !== '' && password !== '') {
+        // Setelah login berhasil, redirect ke halaman Order.html
+        window.location.href = 'Oversky.html';
+      } else {
+        alert('Silakan isi username dan password');
+      }
+    });
+  </script>
+
+      <div class="social-icons" aria-label="Social media links">
+        <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><span class="material-icons" aria-hidden="true">facebook</span></a>
+        <a href="https://www.instagram.com/rafliferdian/" target="_blank" rel="noopener" aria-label="Instagram"><span class="material-icons" aria-hidden="true">instagram</span></a>
+        <a href="https://pinterest.com" target="_blank" rel="noopener" aria-label="Pinterest"><span class="material-icons" aria-hidden="true">pinterest</span></a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer role="contentinfo" aria-label="Site footer">
+  <div class="container footer-container">
+    <div class="footer-links">
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#terms">Terms of Service</a>
+      <a href="#contact">Contact Us</a>
+    </div>
+    <div aria-label="copyright" style="margin-left:auto; opacity:0.6; user-select:none;">
+      &copy; 2025 Oversky. All rights reserved.
+    </div>
+  </div>
+</footer>
+</body>
+</html>
+
