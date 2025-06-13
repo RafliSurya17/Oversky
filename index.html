@@ -292,7 +292,7 @@
     <section class="welcome-section" id="welcome" aria-label="Welcome message">
       <h2>Welcome to Oversky</h2>
       <p>
-        Shine Like The Sky and Bring Your Imagination To The Sky
+        Shine Like The Sky
     </section>
 
     <section class="sign-in-section" id="signin" aria-labelledby="signin-title" role="form" tabindex="-1">
@@ -302,8 +302,11 @@
         <label for="username">Username</label>
         <input type="text" id="username" name="username" placeholder="Enter your username" required /><br><br>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required /><br><br>
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password" 
+			placeholder="Enter your password" required
+			pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+			title="Password minimal 8 karakter dan harus mengandung huruf serta angka" /><br><br>
 
         <button type="submit" class="btn-submit">Login</button>
       </form>
@@ -326,7 +329,7 @@
 
       <div class="social-icons" aria-label="Social media links">
         <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><span class="material-icons" aria-hidden="true">facebook</span></a>
-        <a href="https://www.instagram.com/rafliferdian/" target="_blank" rel="noopener" aria-label="Instagram"><span class="material-icons" aria-hidden="true">instagram</span></a>
+        <a href="https://www.instagram.com/oversky.studio?igsh=MWdiYmlzYjIyaHB1eQ==" target="_blank" rel="noopener" aria-label="Instagram"><span class="material-icons" aria-hidden="true">instagram</span></a>
         <a href="https://pinterest.com" target="_blank" rel="noopener" aria-label="Pinterest"><span class="material-icons" aria-hidden="true">pinterest</span></a>
       </div>
     </section>
@@ -347,4 +350,3 @@
 </footer>
 </body>
 </html>
-
