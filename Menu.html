@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -125,6 +124,106 @@
       outline: none;
     }
 
+    /* Search Bar Styles */
+    .search-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: 2rem; /* Add some space from nav links */
+    }
+    .search-container input[type="text"] {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--color-gray-medium);
+      background-color: var(--color-gray-dark);
+      color: var(--color-white);
+      font-size: 1rem;
+      transition: border-color var(--transition);
+    }
+    .search-container input[type="text"]:focus {
+      border-color: var(--color-white);
+      outline: none;
+    }
+    .search-container button {
+      background-color: var(--color-white);
+      color: var(--color-black);
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color var(--transition), color var(--transition);
+    }
+    .search-container button:hover {
+      background-color: var(--color-gray-light);
+    }
+    /* Styles for the search message (old, now replaced by modal) */
+    .search-message {
+      margin-top: 1rem;
+      text-align: center;
+      color: red; /* Or any color you prefer for error messages */
+      font-weight: 600;
+      padding: 1rem;
+      background-color: rgba(255, 0, 0, 0.1);
+      border-radius: var(--radius);
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      background-color: #121212;
+      padding: 30px;
+      border-radius: var(--radius);
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(255,255,255,0.1);
+      position: relative;
+      max-width: 350px;
+      border: 1px solid var(--color-gray-light);
+      transform: scale(1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .modal-content:hover {
+      box-shadow: 0 15px 30px rgba(255,255,255,0.15);
+      transform: scale(1.02);
+    }
+
+    .close-button {
+      cursor: pointer;
+      font-size: 1.8rem;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      color: var(--color-gray-light);
+      transition: color 0.3s ease;
+    }
+    .close-button:hover {
+      color: var(--color-white);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+
     /* Mobile navigation toggle */
     .mobile-toggle {
       display: none;
@@ -156,6 +255,28 @@
       }
       .mobile-toggle {
         display: block;
+      }
+      nav {
+        flex-wrap: wrap; /* Allow nav items to wrap */
+        justify-content: center; /* Center items when wrapped */
+      }
+      .search-container {
+        width: 100%; /* Make search bar full width on mobile */
+        justify-content: center;
+        margin-top: 1rem; /* Add some space */
+        margin-left: 0; /* Remove left margin */
+        order: 3; /* Push search container to the bottom on mobile */
+      }
+      .search-container input[type="text"] {
+        flex-grow: 1;
+      }
+      .logo {
+        flex-basis: 100%; /* Logo takes full width */
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      .nav-links {
+        order: 2; /* Nav links come after logo */
       }
     }
 
@@ -477,6 +598,11 @@
         <li role="none"><a href="#categories" role="menuitem" tabindex="0">Kategori</a></li>
         <li role="none"><a href="#brand-identity" role="menuitem" tabindex="0">Brand</a></li>
       </ul>
+      <!-- Search Bar Added Here -->
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Cari produk..." aria-label="Search products">
+        <button id="searchButton" aria-label="Perform search">Cari</button>
+      </div>
     </nav>
   </header>
 
@@ -511,11 +637,17 @@
     <div class="categories-grid" role="list">
       <a href="katalog kaos.html" class="category-card" role="listitem" tabindex="0" aria-label="Kategori Kaos">
 	<div class="category-image">
-    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/afbc2b5c-9e70-4192-ae7f-1fb4033a846d.png
-" alt="Kaos category icon" />
+    <img src="88.jpg" alt="Kaos category icon" />
 	</div>
 		<p class="category-name">Kaos</p>
 	</a>
+      <!-- BARIS YANG DITAMBAHKAN UNTUK KATEGORI TAS -->
+      <a href="katalog tas.html" class="category-card" role="listitem" tabindex="0" aria-label="Kategori Tas">
+        <div class="category-image">
+          <img src="Tas Oversky.png" alt="Tas category icon" /> <!-- Menggunakan gambar tas dari katalog tas -->
+        </div>
+        <p class="category-name">Tas</p>
+      </a>
     </div>
   </section>
 
@@ -536,6 +668,24 @@
       </div>
     </div>
   </section>
+
+  <!-- Search Result Message Container (Old, now replaced by modal) -->
+  <!-- <div id="searchResultMessage" class="search-message" style="display: none;"></div> -->
+
+  <!-- Modal for Not Found Notification -->
+  <div id="notFoundModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-button" id="closeModal">&times;</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ff3d3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+      <h3 style="margin: 20px 0 10px; color: #ff3d3d;">Produk Tidak Ditemukan</h3>
+      <p style="margin-bottom: 15px;">Maaf, kami tidak menemukan produk yang Anda cari.</p>
+      <p style="font-size: 0.9em; color: var(--color-gray-light);">Coba cari dengan kata kunci: "kaos" atau "tas"</p>
+    </div>
+  </div>
 
   <script>
     // Mobile nav toggle
@@ -582,9 +732,56 @@
   document.addEventListener("DOMContentLoaded", function () {
     const btn1 = document.querySelector('.btn-buy1');
     if (btn1) btn1.addEventListener('click', () => window.location.href = 'Order1.html');
+
+    // --- Search functionality implementation ---
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    // const searchResultMessage = document.getElementById('searchResultMessage'); // This is no longer used for the pop-up
+
+    // Get the modal elements
+    const notFoundModal = document.getElementById('notFoundModal');
+    const closeModalButton = document.getElementById('closeModal');
+
+    function performSearch() {
+      const searchTerm = searchInput.value.trim().toLowerCase(); // Get input, trim whitespace, convert to lowercase
+
+      if (searchTerm === 'kaos') {
+        window.location.href = 'katalog kaos.html'; // Redirect to catalog page
+      } else if (searchTerm === 'tas') { // Menambahkan kondisi untuk pencarian 'tas'
+        window.location.href = 'katalog tas.html'; // Redirect ke katalog tas
+      } else {
+        // Show the modal with animation when item is not found
+        notFoundModal.style.display = 'flex';
+        setTimeout(() => {
+          notFoundModal.querySelector('.modal-content').style.opacity = '1';
+        }, 10);
+      }
+    }
+
+    // Event listener for search button click
+    searchButton.addEventListener('click', performSearch);
+
+    // Event listener for 'Enter' key press in the search input
+    searchInput.addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    // Event listener to close the modal
+    closeModalButton.addEventListener('click', function() {
+      notFoundModal.style.display = 'none'; // Hide the modal
+    });
+
+    // Close the modal if the user clicks outside of the modal content
+    window.addEventListener('click', function(event) {
+      if (event.target == notFoundModal) {
+        notFoundModal.style.display = 'none';
+      }
+    });
+    // --- End of Search functionality implementation ---
   });
 	
   </script>
 </body>
 </html>
-
