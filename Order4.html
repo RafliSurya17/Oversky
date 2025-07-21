@@ -428,7 +428,7 @@
       padding: 0.75rem 1.5rem;
       border-radius: var(--radius);
       cursor: pointer;
-      transition: background-color var(--transition);
+      transition: background-color 0.3s ease;
     }
 
     .payment-status-section button:hover {
@@ -453,6 +453,19 @@
       background-color: #f2dede;
       border: 1px solid #ebccd1;
       color: #a94442;
+    }
+
+    /* New style for promo code feedback */
+    .promo-feedback {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+    .promo-feedback.success {
+        color: #10b981;
+    }
+    .promo-feedback.error {
+        color: #ef4444;
     }
   </style>
 </head>
@@ -557,6 +570,20 @@
           </div>
         </div>
 
+        <!-- NEW: Input for Promo Code -->
+        <div>
+          <label for="promoCode">Kode Promo (Opsional)</label>
+          <input
+            type="text"
+            id="promoCode"
+            name="promoCode"
+            placeholder="Masukkan kode promo"
+            aria-describedby="promo-feedback"
+          />
+          <span id="promo-feedback" class="promo-feedback"></span>
+        </div>
+        <!-- END NEW -->
+
         <!-- NEW: Bank Selection - Updated for Payment Methods -->
         <div>
           <label for="bank">Pilih Metode Pembayaran *</label>
@@ -587,7 +614,9 @@
       <h2>Detail Pembayaran</h2>
       <div class="payment-details">
         <p>Total yang harus dibayar:</p>
-		<p>Pesanan: Rp 130.000 <br> Ongkos Kirim: Rp 7.000</p>
+        <p id="subtotalDisplay" style="font-size: 1.1rem; margin-bottom: 0.2rem;"></p> <!-- New: Subtotal display -->
+        <p id="shippingDisplay" style="font-size: 1.1rem; margin-bottom: 0.2rem;"></p> <!-- New: Shipping display -->
+        <p id="discountDisplay" style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #10b981;"></p> <!-- New: Discount display -->
         <p style="font-weight: 700; font-size: 1.5rem; color: var(--color-primary);">Rp <span id="totalAmount">137.000</span></p>
         <p id="paymentMethodDisplay">Metode Pembayaran: Virtual Account</p> <!-- New element for method type -->
         <p id="paymentNumberLabel">Nomor Virtual Account:</p> <!-- New element for label -->
@@ -622,14 +651,25 @@
       const paymentNumberLabel = document.getElementById('paymentNumberLabel');
       const paymentInstructions = document.getElementById('paymentInstructions');
 
+      // Dapatkan elemen quantity dan size
+      const quantityInput = document.getElementById('quantity');
+      const sizeSelect = document.getElementById('size');
 
-      const productPrice = 130000; // Updated product price for Oversky Imagination
+      // NEW ELEMENTS FOR PROMO CODE
+      const promoCodeInput = document.getElementById('promoCode');
+      const promoFeedback = document.getElementById('promo-feedback');
+      const subtotalDisplay = document.getElementById('subtotalDisplay');
+      const shippingDisplay = document.getElementById('shippingDisplay');
+      const discountDisplay = document.getElementById('discountDisplay');
+
+      const productPricePerItem = 130000; // Harga per kaos disesuaikan untuk Oversky Imagination
       const shippingCost = 7000;
-      const totalAmount = productPrice + shippingCost;
-      totalAmountDisplay.textContent = totalAmount.toLocaleString('id-ID'); // Format to Indonesian Rupiah
+      const promoCode = "tibatibapromo"; // Kode promo yang valid
+      const discountPercentage = 0.10; // 10% diskon
+      let isPromoApplied = false; // Flag to track if promo is applied
 
       let paymentCountdown;
-      const paymentDuration = 1 * 60; // 5 minutes in seconds (changed from 5 to 1 for testing)
+      const paymentDuration = 5 * 60; // 5 minutes in seconds (changed from 1 minute in Order1)
 
       // Define payment details for each method
       const paymentDetails = {
@@ -671,6 +711,35 @@
         }
       };
 
+      // Fungsi untuk memperbarui total jumlah pembayaran
+      function updateTotalAmount() {
+        const quantity = parseInt(quantityInput.value);
+        if (isNaN(quantity) || quantity < 1) {
+          quantityInput.value = 1;
+          quantity = 1;
+        }
+
+        let currentSubtotal = productPricePerItem * quantity;
+        let currentShippingCost = shippingCost;
+        let discountAmount = 0;
+        let finalTotal = currentSubtotal + currentShippingCost;
+
+        if (isPromoApplied) {
+            discountAmount = currentSubtotal * discountPercentage;
+            finalTotal -= discountAmount;
+        }
+
+        subtotalDisplay.textContent = `Subtotal: Rp ${currentSubtotal.toLocaleString('id-ID')}`;
+        shippingDisplay.textContent = `Ongkos Kirim: Rp ${currentShippingCost.toLocaleString('id-ID')}`;
+        if (isPromoApplied) {
+            discountDisplay.textContent = `Diskon (${(discountPercentage * 100).toFixed(0)}%): -Rp ${discountAmount.toLocaleString('id-ID')}`;
+            discountDisplay.style.display = 'block';
+        } else {
+            discountDisplay.style.display = 'none'; // Sembunyikan jika tidak ada diskon
+        }
+        totalAmountDisplay.textContent = finalTotal.toLocaleString('id-ID');
+      }
+
       function startPaymentTimer() {
         let timeLeft = paymentDuration;
         paymentTimerDisplay.classList.remove('error'); // Remove error class if previously expired
@@ -702,6 +771,32 @@
         paymentNotification.style.display = 'block';
       }
 
+      // Event listener for promo code input
+      promoCodeInput.addEventListener('input', function() {
+          const enteredCode = this.value.trim();
+          if (enteredCode.toLowerCase() === promoCode.toLowerCase()) {
+              isPromoApplied = true;
+              promoFeedback.textContent = 'Kode promo berhasil diterapkan! Anda mendapatkan diskon 10%.';
+              promoFeedback.className = 'promo-feedback success';
+          } else if (enteredCode === '') {
+              isPromoApplied = false;
+              promoFeedback.textContent = '';
+              promoFeedback.className = 'promo-feedback';
+          } else {
+              isPromoApplied = false;
+              promoFeedback.textContent = 'Kode promo tidak valid.';
+              promoFeedback.className = 'promo-feedback error';
+          }
+          updateTotalAmount(); // Recalculate total when promo code changes
+      });
+
+      // Panggil fungsi updateTotalAmount saat halaman dimuat pertama kali
+      updateTotalAmount();
+
+      // Tambahkan event listener untuk input quantity dan change size
+      quantityInput.addEventListener('input', updateTotalAmount);
+      sizeSelect.addEventListener('change', updateTotalAmount); // Ukuran tidak mempengaruhi harga, tapi ini contoh
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -727,6 +822,8 @@
         virtualAccountNumberDisplay.textContent = methodDetails.number;
         paymentInstructions.textContent = methodDetails.instructions;
 
+        // Pastikan totalAmountDisplay sudah diperbarui sebelum modal ditampilkan
+        updateTotalAmount(); // Panggil lagi untuk memastikan nilai terbaru
 
         // Simulate order placement success
         confirmationMessage.style.display = 'block';
@@ -747,6 +844,10 @@
         clearInterval(paymentCountdown); // Stop timer when modal is closed
         form.reset(); // Reset form after payment process (or close modal)
         confirmationMessage.style.display = 'none'; // Hide confirmation message
+        isPromoApplied = false; // Reset promo status
+        promoCodeInput.value = ''; // Clear promo input
+        promoFeedback.textContent = ''; // Clear promo feedback
+        updateTotalAmount(); // Update total to reflect no promo
       });
 
       window.addEventListener('click', (event) => {
@@ -755,6 +856,10 @@
           clearInterval(paymentCountdown); // Stop timer when modal is closed by clicking outside
           form.reset(); // Reset form
           confirmationMessage.style.display = 'none'; // Hide confirmation message
+          isPromoApplied = false; // Reset promo status
+          promoCodeInput.value = ''; // Clear promo input
+          promoFeedback.textContent = ''; // Clear promo feedback
+          updateTotalAmount(); // Update total to reflect no promo
         }
       });
 
