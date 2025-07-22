@@ -137,7 +137,7 @@
   }
 
   /* Sign In Section */
-  .sign-in-section {
+  .sign-in-section, .register-section { /* Added .register-section */
     background: rgba(255 255 255 / 0.1);
     backdrop-filter: blur(10px);
     border-radius: 16px;
@@ -147,9 +147,10 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    margin-top: 2rem; /* Added margin-top for separation */
   }
 
-  .sign-in-section h3 {
+  .sign-in-section h3, .register-section h3 { /* Added .register-section */
     font-size: 1.8rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
@@ -168,26 +169,26 @@
 
   input[type="text"],
   input[type="password"],
-  input[type="email"] { /* Added input[type="email"] */
+  input[type="email"] {
     padding: 0.75rem 1rem;
     border-radius: 12px;
     border: none;
     font-size: 1rem;
     background-color: rgba(255 255 255 / 0.07);
     color: #fff;
-    transition: background-color 0.3s ease, border-color 0.3s ease; /* Added border-color transition */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
     outline-offset: 2px;
   }
 
   input[type="text"]::placeholder,
   input[type="password"]::placeholder,
-  input[type="email"]::placeholder { /* Added input[type="email"] */
+  input[type="email"]::placeholder {
     color: #aaa;
   }
 
   input[type="text"]:focus,
   input[type="password"]:focus,
-  input[type="email"]:focus { /* Added input[type="email"] */
+  input[type="email"]:focus {
     background-color: rgba(255 255 255 / 0.15);
     outline: 2px solid #fff;
     color: #fff;
@@ -195,7 +196,7 @@
 
   /* New style for invalid input */
   input.invalid {
-    border: 2px solid red !important; /* Use !important to override other styles */
+    border: 2px solid red !important;
     outline: none !important;
   }
 
@@ -259,7 +260,7 @@
       padding-right: 2rem;
     }
 
-    .sign-in-section {
+    .sign-in-section, .register-section { /* Adjusted for responsive layout */
       flex-basis: 36%;
       max-width: none;
     }
@@ -276,7 +277,7 @@
       padding: 1rem 0;
     }
 
-    .sign-in-section {
+    .sign-in-section, .register-section { /* Adjusted for responsive layout */
       padding: 1.5rem 1.25rem;
     }
   }
@@ -290,6 +291,8 @@
     <h1>OVERSKY</h1>
     <nav class="desktop-nav" aria-label="Primary navigation">
       <a href="#welcome">Welcome</a>
+      <a href="login.html">Login</a> 
+      <a href="#register">Register</a>
     </nav>
   </div>
 </header>
@@ -300,99 +303,30 @@
       <h2>Welcome to Oversky</h2>
       <p>
         Shine Like The Sky
+      </p>
     </section>
 
-    <section class="sign-in-section" id="signin" aria-labelledby="signin-title" role="form" tabindex="-1">
-      <h3 id="signin-title">Sign in</h3>
-     
-	 <form id="login-form">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required /><br><br>
+    <section class="register-section" id="register" aria-labelledby="register-title" role="form" tabindex="-1">
+      <h3 id="register-title">Register</h3><br>
+      <form id="register-form">
+        <label for="register-username">Username</label><br>
+        <input type="text" id="register-username" name="username" placeholder="Enter your username" required /><br><br>
 
-		<label for="password">Password</label>
-		<input type="password" id="password" name="password" 
-			placeholder="Enter your password" required
-			pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-			title="Password minimal 8 karakter dan harus mengandung huruf serta angka" /><br><br>
+        <label for="register-email">Email</label><br>
+        <input type="email" id="register-email" name="email" placeholder="Enter your email" required /><br><br>
 
-        <button type="submit" class="btn-submit">Login</button>
+        <label for="register-password">Password</label><br>
+        <input type="password" id="register-password" name="password" 
+            placeholder="Enter your password" required
+            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+            title="Password minimal 8 karakter dan harus mengandung huruf serta angka" /><br><br>
+
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" name="confirm-password" 
+            placeholder="Confirm your password" required /><br><br>
+
+        <button type="submit" class="btn-submit">Register</button>
       </form>
-	  
-	   <script>
-    document.getElementById('login-form').addEventListener('submit', function (event) {
-      event.preventDefault(); // Cegah reload halaman
-
-      const emailInput = document.getElementById('email');
-      const passwordInput = document.getElementById('password');
-
-      // Reset invalid class
-      emailInput.classList.remove('invalid');
-      passwordInput.classList.remove('invalid');
-
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      let isValid = true;
-
-      if (email === '') {
-        emailInput.classList.add('invalid');
-        isValid = false;
-      }
-      if (password === '') {
-        passwordInput.classList.add('invalid');
-        isValid = false;
-      }
-
-      // Basic email format validation (can be more robust)
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (email !== '' && !emailPattern.test(email)) {
-        emailInput.classList.add('invalid');
-        isValid = false;
-      }
-
-      // Password pattern validation (already in HTML, but good to re-check in JS for immediate feedback)
-      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      if (password !== '' && !passwordPattern.test(password)) {
-        passwordInput.classList.add('invalid');
-        isValid = false;
-      }
-
-
-      if (isValid) {
-        // Show subtle notification without confirmation
-        const notification = document.createElement('div');
-        notification.textContent = 'Login successful!';
-        notification.style.position = 'fixed';
-        notification.style.bottom = '20px';
-        notification.style.right = '20px';
-        notification.style.backgroundColor = 'rgba(0,255,0,0.8)';
-        notification.style.color = 'white';
-        notification.style.padding = '10px 20px';
-        notification.style.borderRadius = '5px';
-        notification.style.zIndex = '1000';
-        document.body.appendChild(notification);
-        
-        // Redirect after 1 second
-        setTimeout(() => {
-            window.location.href = 'Menu.html';
-        }, 1000);
-      } else {
-        alert('Silakan isi semua kolom dengan benar.');
-      }
-    });
-
-    // Remove invalid class when user starts typing
-    document.getElementById('email').addEventListener('input', function() {
-      this.classList.remove('invalid');
-    });
-    document.getElementById('password').addEventListener('input', function() {
-      this.classList.remove('invalid');
-    });
-  </script>
-
-      <div class="social-icons" aria-label="Social media links">
-        <a href="https://www.instagram.com/oversky.studio?igsh=MWdiYmlzYjIyaHB1eQ==" target="_blank" rel="noopener" aria-label="Instagram"><span class="material-icons" aria-hidden="true">instagram</span></a>
-      </div>
     </section>
   </div>
 </main>
@@ -409,5 +343,134 @@
     </div>
   </div>
 </footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mengambil data pengguna dari localStorage, atau inisialisasi array kosong jika belum ada
+    let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+    
+    // Function to show a subtle notification
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.position = 'fixed';
+      notification.style.bottom = '20px';
+      notification.style.right = '20px';
+      notification.style.backgroundColor = type === 'success' ? 'rgba(0,255,0,0.8)' : 'rgba(255,0,0,0.8)';
+      notification.style.color = 'white';
+      notification.style.padding = '10px 20px';
+      notification.style.borderRadius = '5px';
+      notification.style.zIndex = '1000';
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.remove();
+      }, 3000); // Remove notification after 3 seconds
+    }
+
+    // Register Form Handling
+    document.getElementById('register-form').addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent page reload
+
+      const usernameInput = document.getElementById('register-username');
+      const emailInput = document.getElementById('register-email');
+      const passwordInput = document.getElementById('register-password');
+      const confirmPasswordInput = document.getElementById('confirm-password');
+
+      // Reset invalid class
+      usernameInput.classList.remove('invalid');
+      emailInput.classList.remove('invalid');
+      passwordInput.classList.remove('invalid');
+      confirmPasswordInput.classList.remove('invalid');
+
+      const username = usernameInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      const confirmPassword = confirmPasswordInput.value.trim();
+
+      let isValid = true;
+
+      if (username === '') {
+        usernameInput.classList.add('invalid');
+        isValid = false;
+      }
+      if (email === '') {
+        emailInput.classList.add('invalid');
+        isValid = false;
+      }
+      if (password === '') {
+        passwordInput.classList.add('invalid');
+        isValid = false;
+      }
+      if (confirmPassword === '') {
+        confirmPasswordInput.classList.add('invalid');
+        isValid = false;
+      }
+
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (email !== '' && !emailPattern.test(email)) {
+        emailInput.classList.add('invalid');
+        isValid = false;
+      }
+
+      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      if (password !== '' && !passwordPattern.test(password)) {
+        passwordInput.classList.add('invalid');
+        isValid = false;
+      }
+
+      if (password !== confirmPassword) {
+        passwordInput.classList.add('invalid');
+        confirmPasswordInput.classList.add('invalid');
+        showNotification('Passwords do not match.', 'error');
+        isValid = false;
+      }
+
+      if (isValid) {
+        // Check if email is already registered
+        const isExisting = users.some(user => user.email === email);
+        if (isExisting) {
+          showNotification('Email already registered!', 'error');
+          emailInput.classList.add('invalid');
+          return;
+        }
+        
+        // Add new user to array
+        users.push({
+          username,
+          email,
+          password
+        });
+        
+        // Simpan data pengguna ke localStorage
+        localStorage.setItem('registeredUsers', JSON.stringify(users));
+
+        showNotification('Registration successful! Redirecting to login page...');
+        document.getElementById('register-form').reset();
+        
+        // Redirect to login.html after successful registration
+        setTimeout(() => {
+            window.location.href = 'login.html'; 
+        }, 1500); // Redirect after 1.5 seconds
+      } else {
+        showNotification('Please fill in all fields correctly for registration.', 'error');
+      }
+    });
+
+    // Remove invalid class when user starts typing for register form
+    document.getElementById('register-username').addEventListener('input', function() {
+      this.classList.remove('invalid');
+    });
+    document.getElementById('register-email').addEventListener('input', function() {
+      this.classList.remove('invalid');
+    });
+    document.getElementById('register-password').addEventListener('input', function() {
+      this.classList.remove('invalid');
+    });
+    document.getElementById('confirm-password').addEventListener('input', function() {
+      this.classList.remove('invalid');
+    });
+  });
+</script>
 </body>
 </html>
