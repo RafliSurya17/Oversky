@@ -1,239 +1,96 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Admin Dashboard — Oversky</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Dashboard — Oversky (Supabase)</title>
 
-<style>
-/* =======================
-   LAYOUT DASAR
-======================= */
-body { margin:0; font-family: Inter, Arial, sans-serif; background:#f5f5f5; color:#222; }
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.29.0/dist/umd/supabase.min.js"></script>
+  <!-- Chart.js for laporan grafik -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-/* =======================
-   NAVBAR
-======================= */
-header {
-  background:#111; color:#fff;
-  padding:14px 18px;
-  display:flex; justify-content:space-between; align-items:fixed;
-}
-.toggle-btn {
-  background:#333; color:#fff; border:none;
-  padding:7px 12px; border-radius:6px; cursor:pointer;
-  font-size:18px;
-}
-.logout-btn {
-  background:#e74c3c; color:#fff; border:none;
-  padding:8px 14px; border-radius:6px; cursor:pointer;
-}
-
-/* =======================
-   SIDEBAR (VERSI AWAL YG BISA COLLAPSE)
-======================= */
-        .sidebar {
-            width: 240px;
-            background: #181818;
-            color: white;
-            height: 100vh;
-            position: fixed;
-            padding-top: 20px;
-            transition: width 0.3s ease;
-            overflow: hidden;
-        }
-
-        .sidebar h3 {
-            margin-left: 20px;
-            font-size: 18px;
-            transition: opacity 0.2s;
-        }
-
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 15px;
-            transition: 0.2s;
-        }
-
-        .sidebar a:hover {
-            background: #333;
-        }
-
-        .icon {
-            width: 18px;
-            min-width: 18px;
-        filter:brightness(0) invert(1);
-        }
-
-/* COLLAPSE MODE */
-.sidebar.collapsed { width:70px; }
-.sidebar.collapsed h3,
-.sidebar.collapsed a span {
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .2s;
-}
-
-/* =======================
-   CONTENT
-======================= */
-.content {
-  margin-left:260px;
-  padding:20px;
-  transition:margin-left .28s ease;
-}
-.content.shifted { margin-left:90px; }
-
-/* =======================
-   CARDS + GRID
-======================= */
-.card {
-  background:#fff;
-  padding:18px;
-  border-radius:8px;
-  margin-bottom:18px;
-  box-shadow:0 1px 3px rgba(0,0,0,.06);
-}
-
-.product-grid, .promo-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:18px;
-  margin-top:12px;
-}
-.product-card, .promo-card {
-  background:#fff; border:1px solid #eee;
-  border-radius:8px; padding:12px; text-align:center;
-}
-.product-card img, .promo-card img {
-  width:100%; height:160px; object-fit:cover; border-radius:6px;
-}
-
-.product-name, .promo-name { font-weight:600; margin-top:8px; font-size:14px; }
-
-.product-actions { display:flex; gap:8px; justify-content:center; margin-top:10px; }
-.btn-edit { background:#3498db; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
-.btn-delete{ background:#e74c3c; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
-
-.stock-box { margin-top:8px; font-weight:700; }
-.stock-control{ display:flex; gap:8px; justify-content:center; margin-top:8px; }
-.stock-btn{ background:#2ecc71; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
-.stock-btn.minus{ background:#e67e22; }
-
-/* =======================
-   ORDER TABLE
-======================= */
-.table{
-  width:100%; border-collapse:collapse; margin-top:12px;
-}
-.table th, .table td{
-  padding:10px 8px; border-bottom:1px solid #eee;
-  text-align:left; font-size:14px;
-}
-.table th{ background:#fafafa; font-weight:600; }
-
-.tag { padding:4px 8px; border-radius:6px; font-size:13px; color:#fff; }
-.tag.pending{ background:#f39c12; }
-.tag.process{ background:#3498db; }
-.tag.shipped{ background:#8e44ad; }
-.tag.done{ background:#27ae60; }
-
-/* =======================
-   MODAL
-======================= */
-.modal-backdrop{
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.5);
-  display:none; align-items:center; justify-content:center;
-  z-index:999;
-}
-.modal{
-  background:#fff;
-  width:90%; max-width:760px;
-  border-radius:8px; padding:18px;
-  max-height:85vh; overflow:auto;
-}
-.line { display:flex; justify-content:space-between; margin-bottom:10px; }
-.small { font-size:13px; color:#555; }
-
-</style>
+  <style>
+    /* Minimal styling — mengikuti layout sebelumnya */
+    :root{--bg:#f5f5f5;--card:#fff;--dark:#181818;--accent:#3498db}
+    body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#222}
+    header{background:#111;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+    .toggle-btn{background:#333;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer}
+    .logout-btn{background:#e74c3c;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer}
+    .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--dark);color:#fff;padding-top:20px;transition:width .28s;overflow:hidden}
+    .sidebar h3{margin-left:18px;font-size:18px;margin-bottom:8px}
+    .sidebar a{display:flex;align-items:center;gap:10px;padding:10px 18px;color:#fff;text-decoration:none}
+    .sidebar a:hover{background:#333}
+    .icon{width:18px;min-width:18px;filter:brightness(0) invert(1)}
+    .sidebar.collapsed{width:70px}
+    .sidebar.collapsed h3,.sidebar.collapsed a span{opacity:0;pointer-events:none}
+    .content{margin-left:260px;padding:20px;transition:margin-left .28s}
+    .content.shifted{margin-left:90px}
+    .card{background:var(--card);padding:18px;border-radius:8px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .product-grid,.promo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;margin-top:12px}
+    .product-card,.promo-card{background:#fff;border:1px solid #eee;border-radius:8px;padding:12px;text-align:center}
+    .product-card img,.promo-card img{width:100%;height:140px;object-fit:cover;border-radius:6px}
+    .product-name,.promo-name{font-weight:600;margin-top:8px;font-size:14px}
+    .product-actions{display:flex;gap:8px;justify-content:center;margin-top:10px}
+    .btn-edit,.btn-delete,.btn-secondary{padding:6px 10px;border-radius:6px;border:none;cursor:pointer}
+    .btn-edit{background:var(--accent);color:#fff}
+    .btn-delete{background:#e74c3c;color:#fff}
+    .btn-secondary{background:#bdc3c7;color:#222}
+    .stock-box{margin-top:8px;font-weight:700}
+    .stock-control{display:flex;gap:8px;justify-content:center;margin-top:8px}
+    .stock-btn{padding:6px 10px;border-radius:6px;border:none;cursor:pointer;background:#2ecc71;color:#fff}
+    .stock-btn.minus{background:#e67e22}
+    .table{width:100%;border-collapse:collapse;margin-top:12px}
+    .table th,.table td{padding:10px 8px;border-bottom:1px solid #eee;text-align:left;font-size:14px}
+    .table th{background:#fafafa;font-weight:600}
+    .controls{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:999}
+    .modal{background:#fff;width:90%;max-width:520px;border-radius:8px;padding:18px;max-height:85vh;overflow:auto}
+    input[type=file]{padding:6px}
+    .small{font-size:13px;color:#666}
+    @media (max-width:700px){.content{margin-left:0}.sidebar{transform:translateX(-100%)}}
+  </style>
 </head>
 <body>
 
-<!-- =======================
-     NAVBAR (FINAL)
-======================= -->
 <header>
-  <div style="display:flex;gap:10px;align-items:center;">
+  <div style="display:flex;gap:12px;align-items:center">
     <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-    <h2 style="margin:0;">Admin Dashboard</h2>
+    <h2 style="color:#fff;margin:0">Admin Dashboard (Supabase)</h2>
   </div>
-  <button class="logout-btn" onclick="logout()">Logout</button>
+  <div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
 </header>
 
-<!-- =======================
-     SIDEBAR (VERSI AWAL)
-======================= -->
 <div class="sidebar" id="sidebar">
   <h3>Navigasi</h3>
-
-  <a href="#dashboard">
-    <img class="icon" src="https://api.iconify.design/lucide-home.svg"><span>Dashboard</span>
-  </a>
-
-  <a href="#produk">
-    <img class="icon" src="https://api.iconify.design/lucide-box.svg"><span>Manajemen Produk</span>
-  </a>
-
-  <a href="#order-mgmt">
-    <img class="icon" src="https://api.iconify.design/lucide-clipboard-list.svg"><span>Manajemen Order</span>
-  </a>
-
-  <a href="#harga">
-    <img class="icon" src="https://api.iconify.design/lucide-badge-percent.svg"><span>Harga & Promo</span>
-  </a>
-
-  <a href="#laporan">
-    <img class="icon" src="https://api.iconify.design/lucide-chart-line.svg"><span>Laporan</span>
-  </a>
-
-  <a href="#user">
-    <img class="icon" src="https://api.iconify.design/lucide-users.svg"><span>User Management</span>
-  </a>
-
-  <a href="#logistik">
-    <img class="icon" src="https://api.iconify.design/lucide-truck.svg"><span>Integrasi Logistik</span>
-  </a>
+  <a href="#dashboard"><img class="icon" src="https://api.iconify.design/lucide-home.svg" alt=""><span>Dashboard</span></a>
+  <a href="#produk"><img class="icon" src="https://api.iconify.design/lucide-box.svg" alt=""><span>Manajemen Produk</span></a>
+  <a href="#order-mgmt"><img class="icon" src="https://api.iconify.design/lucide-clipboard-list.svg" alt=""><span>Manajemen Order</span></a>
+  <a href="#harga"><img class="icon" src="https://api.iconify.design/lucide-badge-percent.svg" alt=""><span>Harga & Promo</span></a>
+  <a href="#laporan"><img class="icon" src="https://api.iconify.design/lucide-chart-line.svg" alt=""><span>Laporan</span></a>
+  <a href="#user"><img class="icon" src="https://api.iconify.design/lucide-users.svg" alt=""><span>User Management</span></a>
+  <a href="#logistik"><img class="icon" src="https://api.iconify.design/lucide-truck.svg" alt=""><span>Integrasi Logistik</span></a>
 </div>
 
-<!-- =======================
-     CONTENT
-======================= -->
 <div class="content" id="content">
-
-  <!-- DASHBOARD -->
-  <div class="card" id="dashboard">
+  <div id="dashboard" class="card">
     <h3>Selamat datang, Admin!</h3>
-    <p class="small">Gunakan menu untuk mengelola produk, promo, dan pesanan.</p>
+    <p class="small">Menggunakan Supabase — bucket <b>images</b> untuk upload gambar.</p>
   </div>
 
-  <!-- PRODUK -->
+  <!-- Produk -->
   <div id="produk" class="card">
     <h3>Manajemen Produk</h3>
-    <div id="productGrid" class="product-grid"></div>
+    <div id="productGrid" class="product-grid">Memuat...</div>
   </div>
 
-  <!-- ORDER -->
+  <!-- Order Management -->
   <div id="order-mgmt" class="card">
     <h3>Manajemen Order</h3>
-
     <div class="controls">
-      <input type="search" id="searchOrder" placeholder="Cari order..." />
+      <input id="searchOrder" placeholder="Cari order (nama/email/id)..." />
       <select id="filterStatus">
         <option value="">Semua status</option>
         <option value="pending">Pending</option>
@@ -242,350 +99,468 @@ header {
         <option value="done">Done</option>
         <option value="cancelled">Cancelled</option>
       </select>
-      <button onclick="loadOrders()">Refresh</button>
+      <button class="btn-secondary" onclick="loadOrders()">Refresh</button>
     </div>
-
     <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th><th>Customer</th><th>Items</th>
-          <th>Total</th><th>Tanggal</th><th>Status</th><th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="ordersBody"></tbody>
+      <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody id="ordersBody"><tr><td colspan="7">Memuat...</td></tr></tbody>
     </table>
   </div>
 
-  <!-- PROMO -->
+  <!-- Harga & Promo -->
   <div id="harga" class="card">
     <h3>Harga & Promo</h3>
     <button class="btn-edit" onclick="openPromoModal()">+ Tambah Promo</button>
-    <div id="promoGrid" class="promo-grid"></div>
+    <div id="promoGrid" class="promo-grid">Memuat...</div>
   </div>
 
-<!-- LAPORAN -->
-<div id="laporan" class="card">
-  <h3>Laporan Penjualan</h3>
+  <!-- Laporan -->
+  <div id="laporan" class="card">
+    <h3>Laporan Penjualan</h3>
+    <div class="controls">
+      <select id="reportRange">
+        <option value="7">7 Hari</option>
+        <option value="30" selected>30 Hari</option>
+        <option value="90">90 Hari</option>
+        <option value="365">1 Tahun</option>
+      </select>
+      <button class="btn-secondary" onclick="loadReport()">Tampilkan</button>
+    </div>
 
-  <div class="controls" style="margin-bottom:10px;">
-    <select id="reportRange">
-      <option value="7">7 Hari Terakhir</option>
-      <option value="30">30 Hari Terakhir</option>
-      <option value="90">3 Bulan Terakhir</option>
-      <option value="365">1 Tahun Terakhir</option>
-    </select>
-    <button onclick="loadReport()">Tampilkan</button>
+    <div style="display:flex;gap:20px;align-items:center;margin-bottom:12px">
+      <div><b>Total Transaksi:</b> <span id="reportTotalTransaksi">0</span></div>
+      <div><b>Total Pendapatan:</b> Rp <span id="reportTotalPendapatan">0</span></div>
+    </div>
+
+    <canvas id="salesChart" height="120"></canvas>
+
+    <table class="table" style="margin-top:12px">
+      <thead><tr><th>ID Order</th><th>Tanggal</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
+      <tbody id="reportTableBody"></tbody>
+    </table>
   </div>
 
-  <div id="reportSummary" style="margin-bottom:15px; font-size:14px;">
-    <b>Total Transaksi:</b> <span id="reportTotalTransaksi">0</span><br>
-    <b>Total Pendapatan:</b> Rp <span id="reportTotalPendapatan">0</span>
-  </div>
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID Order</th>
-        <th>Tanggal</th>
-        <th>Customer</th>
-        <th>Total</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="reportTableBody"></tbody>
-  </table>
-</div>
-
-  <!-- HALAMAN LAIN -->
-  <div id="user" class="card"><h3>User Management</h3></div>
+  <div id="user" class="card"><h3>User Management</h3><p class="small">(gunakan Supabase Auth & tabel users jika mau)</p></div>
   <div id="logistik" class="card"><h3>Integrasi Logistik</h3></div>
-
 </div>
 
-<!-- =======================
-     MODAL PROMO
-======================= -->
+<!-- Promo Modal -->
 <div id="promoModal" class="modal-backdrop">
   <div class="modal">
     <h3 id="modalTitle">Tambah Promo</h3>
     <form id="promoForm">
       <input type="hidden" id="promoId">
-      <label>Nama Promo</label>
-      <input type="text" id="promoName" required>
-      <label>Harga Promo</label>
-      <input type="number" id="promoPrice" required>
-      <label>Upload Gambar</label>
-      <input type="file" id="promoImage">
-      <button type="submit" class="btn-edit">Simpan</button>
-      <button type="button" class="btn-delete" onclick="closePromoModal()">Batal</button>
+      <label>Nama Promo</label><br/>
+      <input id="promoName" type="text" required style="width:100%;padding:8px;margin-bottom:8px"><br/>
+      <label>Harga Promo</label><br/>
+      <input id="promoPrice" type="number" required style="width:100%;padding:8px;margin-bottom:8px"><br/>
+      <label>Gambar Promo (jpg/png)</label><br/>
+      <input id="promoImage" type="file" accept="image/*" style="margin-bottom:12px"><br/>
+      <div style="display:flex;gap:8px">
+        <button class="btn-edit" type="submit">Simpan</button>
+        <button type="button" class="btn-secondary" onclick="closePromoModal()">Batal</button>
+      </div>
     </form>
   </div>
 </div>
 
-<!-- =======================
-     MODAL ORDER DETAIL
-======================= -->
+<!-- Order detail modal -->
 <div id="orderModal" class="modal-backdrop">
   <div class="modal">
-    <h3>Detail Pesanan <span id="orderModalId"></span></h3>
-    <div id="orderDetailContent"></div>
-
-    <select id="orderStatusSelect">
+    <h3>Detail Order <span id="orderModalId"></span></h3>
+    <div id="orderDetailContent" style="margin-bottom:12px"></div>
+    <select id="orderStatusSelect" style="padding:8px;border-radius:6px;margin-right:8px">
       <option value="pending">Pending</option>
       <option value="processing">Processing</option>
       <option value="shipped">Shipped</option>
       <option value="done">Done</option>
       <option value="cancelled">Cancelled</option>
     </select>
-
     <button id="saveOrderStatusBtn" class="btn-edit">Simpan Status</button>
     <button id="deleteOrderBtn" class="btn-delete">Hapus Order</button>
-    <button onclick="closeOrderModal()" class="btn-secondary">Tutup</button>
+    <button class="btn-secondary" onclick="closeOrderModal()">Tutup</button>
   </div>
 </div>
 
 <script>
-/* ======================= NAVIGATION ======================= */
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("collapsed");
-  document.getElementById("content").classList.toggle("shifted");
-}
-function logout(){ window.location.href="../login.html"; }
+/* -------------------------
+   Supabase init (gunakan kredensial yang kamu berikan)
+   - bucket 'images' akan dipakai untuk upload
+--------------------------*/
+const SUPA_URL = "https://ryomejcknromjxtfcjhh.supabase.co";
+const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5b21lamNrbnJvbWp4dGZjamhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzODAxMDMsImV4cCI6MjA4MDk1NjEwM30.gRGbrsQ-0X5k0k2Wp4kISTCUKlK_kXC3abN-X3S8hWI";
 
-/* ======================= PRODUK ======================= */
-loadProducts();
-function loadProducts(){
-  fetch("get_products.php")
-    .then(r=>r.json())
-    .then(data=>{
-      let g=document.getElementById("productGrid");
-      g.innerHTML="";
-      data.forEach(p=>{
-        g.innerHTML+=`
-        <div class="product-card">
-          <img src="../assets/img/${p.image}">
-          <div class="product-name">${p.name}</div>
-          <div class="product-actions">
-            <button class="btn-edit" onclick="editProduct(${p.id})">Edit</button>
-            <button class="btn-delete" onclick="deleteProduct(${p.id})">Hapus</button>
-          </div>
-          <div class="stock-box">Stok: <span id="stok${p.id}">${p.stock}</span></div>
-          <div class="stock-control">
-            <button class="stock-btn minus" onclick="updateStock(${p.id},-1)">-</button>
-            <button class="stock-btn" onclick="updateStock(${p.id},1)">+</button>
-          </div>
-        </div>`;
-      });
-    });
-}
+const supabase = supabaseJs.createClient
+  ? supabaseJs.createClient(SUPA_URL, SUPA_KEY) // if library variable loaded under supabaseJs (UMD)
+  : supabase.createClient(SUPA_URL, SUPA_KEY);  // fallback
 
-function editProduct(id) {
-  alert("Edit produk ID: " + id);
+/* UI helpers */
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('content').classList.toggle('shifted'); }
+function logout(){ alert('Keluar'); /* tambahkan redirect logout jika ada auth server-side */ }
 
-  // Jika ingin buka modal edit, bisa ditambahkan
-  // openProductModal(id);
-}
-
-function deleteProduct(id) {
-  if (!confirm("Yakin ingin menghapus produk ini?")) return;
-
-  let fd = new FormData();
-  fd.append("id", id);
-
-  fetch("delete_product.php", { method: "POST", body: fd })
-    .then(r => r.text())
-    .then(res => {
-      alert(res);
-      loadProducts(); // refresh grid
-    });
-}
-
-function updateStock(id, amount){
-  let el=document.getElementById("stok"+id);
-  let newStock=Math.max(0, parseInt(el.innerHTML)+amount);
-  el.innerHTML=newStock;
-
-  let fd=new FormData();
-  fd.append("id",id);
-  fd.append("stock",newStock);
-  fetch("update_stock.php",{method:"POST", body:fd});
-}
-
-/* ======================= ORDER ======================= */
-loadOrders();
-let currentOrders=[];
-
-function loadOrders(){
-  fetch("get_orders.php")
-    .then(r=>r.json())
-    .then(data=>{
-      currentOrders=data;
-      renderOrdersTable(data);
-    });
-}
-
-function renderOrdersTable(data){
-  let b=document.getElementById("ordersBody");
-  b.innerHTML="";
-  data.forEach(o=>{
-    b.innerHTML+=`
-    <tr>
-      <td>#${o.id}</td>
-      <td>${o.customer_name}</td>
-      <td>${o.items_summary}</td>
-      <td>Rp ${o.total}</td>
-      <td>${o.created_at}</td>
-      <td>${o.status}</td>
-      <td>
-        <button class="btn-edit" onclick="openOrderModal(${o.id})">Detail</button>
-        <button class="btn-delete" onclick="deleteOrderConfirm(${o.id})">Hapus</button>
-      </td>
-    </tr>`;
+/* -------------------------
+   PRODUCTS
+------------------------- */
+async function loadProducts(){
+  const { data, error } = await supabase.from('products').select('*').order('id',{ascending:true});
+  const grid = document.getElementById('productGrid');
+  if(error){ grid.innerHTML = `<div class="small">Gagal memuat produk: ${error.message}</div>`; console.error(error); return; }
+  grid.innerHTML = '';
+  data.forEach(p=>{
+    grid.innerHTML += `
+      <div class="product-card" id="productCard${p.id}">
+        <img src="${getPublicImageUrl(p.image)}" alt="${escapeHtml(p.name)}">
+        <div class="product-name">${escapeHtml(p.name)}</div>
+        <div class="product-actions">
+          <button class="btn-edit" onclick="editProduct(${p.id})">Edit</button>
+          <button class="btn-delete" onclick="deleteProduct(${p.id}, '${p.image||''}')">Hapus</button>
+        </div>
+        <div class="stock-box">Stok: <span id="stok${p.id}">${p.stock||0}</span></div>
+        <div class="stock-control">
+          <button class="stock-btn minus" onclick="updateStock(${p.id}, -1)">-</button>
+          <button class="stock-btn" onclick="updateStock(${p.id}, 1)">+</button>
+        </div>
+      </div>`;
   });
 }
 
-/* ======================= ORDER MODAL ======================= */
-function openOrderModal(id){
-  let order=currentOrders.find(o=>o.id==id);
-  if(!order) return;
-
-  document.getElementById("orderModalId").innerHTML="#"+id;
-  document.getElementById("orderDetailContent").innerHTML=`
-    <div class="line"><b>Nama</b><span>${order.customer_name}</span></div>
-    <div class="line"><b>Email</b><span>${order.email}</span></div>
-    <div class="line"><b>Alamat</b><span>${order.address}</span></div>
-    <div class="line"><b>Tanggal</b><span>${order.created_at}</span></div>
-    <div class="line"><b>Total</b><span>Rp ${order.total}</span></div>
-  `;
-
-  document.getElementById("orderStatusSelect").value=order.status;
-  document.getElementById("saveOrderStatusBtn").onclick=()=>updateOrderStatus(id);
-  document.getElementById("deleteOrderBtn").onclick=()=>deleteOrderConfirm(id);
-
-  document.getElementById("orderModal").style.display="flex";
-}
-function closeOrderModal(){ document.getElementById("orderModal").style.display="none"; }
-
-function updateOrderStatus(id){
-  let status=document.getElementById("orderStatusSelect").value;
-  let fd=new FormData();
-  fd.append("id",id);
-  fd.append("status",status);
-
-  fetch("update_order_status.php",{method:"POST", body:fd})
-    .then(r=>r.text()).then(t=>{ alert(t); closeOrderModal(); loadOrders(); });
+/* helper to build public URL from bucket 'images' */
+function getPublicImageUrl(filename){
+  if(!filename) return 'https://via.placeholder.com/320x240?text=No+Image';
+  // Supabase storage public URL format:
+  return `${SUPA_URL}/storage/v1/object/public/images/${encodeURIComponent(filename)}`;
 }
 
-function deleteOrderConfirm(id){
-  if(!confirm("Yakin hapus order ini?")) return;
-  let fd=new FormData();
-  fd.append("id",id);
-
-  fetch("delete_order.php",{method:"POST", body:fd})
-    .then(r=>r.text()).then(t=>{ alert(t); closeOrderModal(); loadOrders(); });
+/* Edit product (simple prompt-based) */
+async function editProduct(id){
+  // fetch product
+  const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
+  if(error){ alert('Gagal mengambil produk: '+error.message); return; }
+  const newName = prompt('Ubah nama produk:', data.name);
+  if(newName === null) return;
+  const newPrice = prompt('Ubah harga (angka):', data.price);
+  if(newPrice === null) return;
+  const { error:updateErr } = await supabase.from('products').update({ name: newName, price: newPrice }).eq('id', id);
+  if(updateErr) alert('Gagal update: '+updateErr.message); else { alert('Produk diperbarui'); loadProducts(); }
 }
 
-/* ======================= PROMO ======================= */
-loadPromos();
-function loadPromos(){
-  fetch("get_promo.php")
-    .then(r=>r.json())
-    .then(data=>{
-      let g=document.getElementById("promoGrid");
-      g.innerHTML="";
-      data.forEach(pr=>{
-        g.innerHTML+=`
-        <div class="promo-card">
-          <img src="../assets/img/${pr.image}">
-          <div class="promo-name">${pr.name}</div>
-          <div class="promo-price">Rp ${pr.price}</div>
-          <div class="product-actions">
-            <button class="btn-edit" onclick='openPromoModal(${JSON.stringify(pr)})'>Edit</button>
-            <button class="btn-delete" onclick="deletePromo(${pr.id})">Hapus</button>
-          </div>
-        </div>`;
-      });
-    });
+/* Delete product */
+async function deleteProduct(id, imageName = ''){
+  if(!confirm('Yakin ingin menghapus produk ini?')) return;
+  // delete DB row
+  const { error } = await supabase.from('products').delete().eq('id', id);
+  if(error){ alert('Gagal menghapus produk: '+error.message); return; }
+  // optionally delete image from storage
+  if(imageName){
+    await supabase.storage.from('images').remove([imageName]).catch(e=>console.warn('hapus image error',e));
+  }
+  alert('Produk dihapus');
+  loadProducts();
 }
 
+/* update stock */
+async function updateStock(id, delta){
+  const stokSpan = document.getElementById('stok'+id);
+  const current = parseInt(stokSpan.textContent) || 0;
+  const next = Math.max(0, current + delta);
+  // update DB
+  const { error } = await supabase.from('products').update({ stock: next }).eq('id', id);
+  if(error){ alert('Gagal update stok: '+error.message); return; }
+  stokSpan.textContent = next;
+}
+
+/* -------------------------
+   PROMO CRUD (upload ke bucket 'images')
+------------------------- */
 function openPromoModal(data=null){
-  document.getElementById("promoModal").style.display="flex";
-
+  document.getElementById('promoModal').style.display = 'flex';
   if(data){
-    document.getElementById("modalTitle").innerHTML="Edit Promo";
-    document.getElementById("promoId").value=data.id;
-    document.getElementById("promoName").value=data.name;
-    document.getElementById("promoPrice").value=data.price;
+    document.getElementById('modalTitle').textContent = 'Edit Promo';
+    document.getElementById('promoId').value = data.id;
+    document.getElementById('promoName').value = data.name;
+    document.getElementById('promoPrice').value = data.price;
   } else {
-    document.getElementById("modalTitle").innerHTML="Tambah Promo";
-    document.getElementById("promoForm").reset();
-    document.getElementById("promoId").value="";
+    document.getElementById('modalTitle').textContent = 'Tambah Promo';
+    document.getElementById('promoForm').reset();
+    document.getElementById('promoId').value = '';
   }
 }
-function closePromoModal(){ document.getElementById("promoModal").style.display="none"; }
+function closePromoModal(){ document.getElementById('promoModal').style.display = 'none'; }
 
-document.getElementById("promoForm").onsubmit=function(e){
+document.getElementById('promoForm').addEventListener('submit', async function(e){
   e.preventDefault();
+  const id = document.getElementById('promoId').value || null;
+  const name = document.getElementById('promoName').value.trim();
+  const price = Number(document.getElementById('promoPrice').value) || 0;
+  const fileInput = document.getElementById('promoImage');
+  let filename = null;
 
-  let fd=new FormData();
-  fd.append("id",document.getElementById("promoId").value);
-  fd.append("name",document.getElementById("promoName").value);
-  fd.append("price",document.getElementById("promoPrice").value);
+  // if file selected -> upload to storage images/
+  if(fileInput.files && fileInput.files[0]){
+    const file = fileInput.files[0];
+    // generate unique filename: timestamp-original
+    filename = `${Date.now()}_${file.name.replace(/\s+/g,'_')}`;
+    const { data: uploadData, error: uploadError } = await supabase.storage.from('images').upload(filename, file, { cacheControl: '3600', upsert: false });
+    if(uploadError){
+      alert('Gagal upload gambar: ' + uploadError.message);
+      console.error(uploadError);
+      return;
+    }
+    // now file is in bucket images/
+  }
 
-  let file=document.getElementById("promoImage").files[0];
-  if(file) fd.append("image",file);
+  if(id){
+    // edit existing promo
+    const payload = { name, price };
+    if(filename) payload.image = filename;
+    const { error } = await supabase.from('promo').update(payload).eq('id', id);
+    if(error){ alert('Gagal update promo: '+error.message); return; }
+    alert('Promo diperbarui');
+  } else {
+    // create new promo
+    const { error } = await supabase.from('promo').insert([{ name, price, image: filename }]);
+    if(error){ alert('Gagal menambah promo: '+error.message); return; }
+    alert('Promo ditambahkan');
+  }
 
-  fetch("save_promo.php",{method:"POST", body:fd})
-    .then(r=>r.text()).then(t=>{
-      alert(t);
-      closePromoModal();
-      loadPromos();
-    });
-};
+  closePromoModal();
+  loadPromos();
+});
 
-function deletePromo(id){
-  if(!confirm("Hapus promo ini?")) return;
-  let fd=new FormData();
-  fd.append("id",id);
-
-  fetch("delete_promo.php",{method:"POST", body:fd})
-    .then(r=>r.text()).then(t=>{
-      alert(t);
-      loadPromos();
-    });
+async function loadPromos(){
+  const { data, error } = await supabase.from('promo').select('*').order('id', { ascending: true });
+  const grid = document.getElementById('promoGrid');
+  if(error){ grid.innerHTML = `<div class="small">Gagal memuat promo: ${error.message}</div>`; return; }
+  grid.innerHTML = '';
+  data.forEach(pr=>{
+    grid.innerHTML += `
+      <div class="promo-card" id="promo${pr.id}">
+        <img src="${getPublicImageUrl(pr.image)}" alt="${escapeHtml(pr.name)}">
+        <div class="promo-name">${escapeHtml(pr.name)}</div>
+        <div class="small">Rp ${Number(pr.price).toLocaleString('id-ID')}</div>
+        <div class="product-actions">
+          <button class="btn-edit" onclick='openPromoModal(${JSON.stringify(pr)})'>Edit</button>
+          <button class="btn-delete" onclick="deletePromo(${pr.id}, '${pr.image||''}')">Hapus</button>
+        </div>
+      </div>`;
+  });
 }
 
-/* ======================= LAPORAN ======================= */
+async function deletePromo(id, imageName=''){
+  if(!confirm('Hapus promo ini?')) return;
+  const { error } = await supabase.from('promo').delete().eq('id', id);
+  if(error){ alert('Gagal menghapus promo: '+error.message); return; }
+  if(imageName) await supabase.storage.from('images').remove([imageName]).catch(()=>{/*ignore*/});
+  alert('Promo dihapus');
+  loadPromos();
+}
 
-function loadReport() {
-  let range = document.getElementById("reportRange").value;
+/* -------------------------
+   ORDERS (manajemen)
+------------------------- */
+let currentOrders = [];
+async function loadOrders(){
+  const { data, error } = await supabase.from('orders').select('*').order('created_at',{ascending:false}).limit(500);
+  const tbody = document.getElementById('ordersBody');
+  if(error){ tbody.innerHTML = `<tr><td colspan="7">Gagal memuat pesanan: ${error.message}</td></tr>`; return; }
+  currentOrders = data.map(d => {
+    // items_summary helper if items JSON stored
+    let summary = '';
+    try{
+      const items = typeof d.items === 'string' ? JSON.parse(d.items) : d.items;
+      if(Array.isArray(items)){
+        summary = items.slice(0,2).map(i=>i.name || i.product_name || i.title || 'item').join(', ');
+        if(items.length>2) summary += ` (+${items.length-2})`;
+      } else summary = String(d.items).slice(0,80);
+    }catch(e){ summary = String(d.items).slice(0,80) }
+    return { ...d, items_summary: summary };
+  });
 
-  fetch("get_report.php?range=" + range)
-    .then(r => r.json())
-    .then(data => {
-      // summary
-      document.getElementById("reportTotalTransaksi").innerHTML = data.total_transaksi;
-      document.getElementById("reportTotalPendapatan").innerHTML = data.total_pendapatan;
+  // apply filter/search
+  renderOrdersTable(currentOrders);
+}
 
-      // table
-      let body = document.getElementById("reportTableBody");
-      body.innerHTML = "";
+function renderOrdersTable(data){
+  const q = (document.getElementById('searchOrder').value||'').toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+  const tbody = document.getElementById('ordersBody');
+  const rows = data.filter(o=>{
+    if(statusFilter && o.status !== statusFilter) return false;
+    if(!q) return true;
+    return String(o.id).includes(q) || (o.customer_name && o.customer_name.toLowerCase().includes(q)) || (o.email && o.email.toLowerCase().includes(q));
+  });
+  if(rows.length===0){ tbody.innerHTML = '<tr><td colspan="7">Tidak ada pesanan.</td></tr>'; return; }
+  tbody.innerHTML = '';
+  rows.forEach(o=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>#${o.id}</td>
+        <td>${escapeHtml(o.customer_name || o.name || '-') }<div class="small">${escapeHtml(o.email||'')}</div></td>
+        <td>${escapeHtml(o.items_summary)}</td>
+        <td>Rp ${Number(o.total||0).toLocaleString('id-ID')}</td>
+        <td>${escapeHtml(o.created_at || '')}</td>
+        <td>${escapeHtml(o.status || '')}</td>
+        <td>
+          <button class="btn-edit" onclick="openOrderModal(${o.id})">Detail</button>
+          <button class="btn-delete" onclick="deleteOrderConfirm(${o.id})">Hapus</button>
+        </td>
+      </tr>`;
+  });
+}
 
-      data.items.forEach(rp => {
-        body.innerHTML += `
-        <tr>
-          <td>#${rp.id}</td>
-          <td>${rp.created_at}</td>
-          <td>${rp.customer_name}</td>
-          <td>Rp ${rp.total}</td>
-          <td>${rp.status}</td>
-        </tr>`;
+function openOrderModal(id){
+  const ord = currentOrders.find(x => Number(x.id) === Number(id));
+  if(!ord){ alert('Order tidak ditemukan'); return; }
+  document.getElementById('orderModal').style.display = 'flex';
+  document.getElementById('orderModalId').textContent = '#'+ord.id;
+  const cont = document.getElementById('orderDetailContent');
+  cont.innerHTML = `
+    <div class="small"><b>Nama:</b> ${escapeHtml(ord.customer_name || ord.name || '-')}</div>
+    <div class="small"><b>Email:</b> ${escapeHtml(ord.email || '-')}</div>
+    <div class="small"><b>Phone:</b> ${escapeHtml(ord.phone || '-')}</div>
+    <div class="small"><b>Alamat:</b> ${escapeHtml(ord.address || '-')}</div>
+    <div style="margin-top:8px"><b>Items:</b></div>
+  `;
+  try{
+    const items = typeof ord.items === 'string' ? JSON.parse(ord.items) : ord.items;
+    if(Array.isArray(items)){
+      items.forEach(it=>{
+        cont.innerHTML += `<div style="display:flex;gap:10px;align-items:center;margin:8px 0">
+          <div style="width:64px;height:64px;flex-shrink:0"><img src="${getPublicImageUrl(it.image||'')}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"></div>
+          <div><b>${escapeHtml(it.name||it.product_name||'')}</b><div class="small">Qty: ${escapeHtml(String(it.qty||it.quantity||1))} — Rp ${Number(it.price||it.unit_price||0).toLocaleString('id-ID')}</div></div>
+        </div>`;
       });
-    });
-}
-// load default laporan saat halaman dibuka
-loadReport();
+    } else {
+      cont.innerHTML += `<div class="small">${escapeHtml(String(ord.items))}</div>`;
+    }
+  }catch(e){
+    cont.innerHTML += `<div class="small">${escapeHtml(String(ord.items||''))}</div>`;
+  }
+  cont.innerHTML += `<div style="margin-top:8px"><b>Total:</b> Rp ${Number(ord.total||0).toLocaleString('id-ID')}</div>`;
 
+  document.getElementById('orderStatusSelect').value = ord.status || 'pending';
+  document.getElementById('saveOrderStatusBtn').onclick = () => updateOrderStatus(ord.id);
+  document.getElementById('deleteOrderBtn').onclick = () => deleteOrderConfirm(ord.id);
+}
+
+function closeOrderModal(){ document.getElementById('orderModal').style.display = 'none'; }
+
+async function updateOrderStatus(id){
+  const status = document.getElementById('orderStatusSelect').value;
+  const { error } = await supabase.from('orders').update({ status }).eq('id', id);
+  if(error){ alert('Gagal update status: '+error.message); return; }
+  alert('Status disimpan');
+  closeOrderModal();
+  loadOrders();
+}
+
+async function deleteOrderConfirm(id){
+  if(!confirm('Yakin hapus order #' + id + '?')) return;
+  const { error } = await supabase.from('orders').delete().eq('id', id);
+  if(error){ alert('Gagal hapus order: '+error.message); return; }
+  alert('Order dihapus');
+  closeOrderModal();
+  loadOrders();
+}
+
+/* -------------------------
+   LAPORAN + GRAFIK
+------------------------- */
+let salesChart = null;
+async function loadReport(){
+  const days = Number(document.getElementById('reportRange').value || 30);
+  // get orders in range
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+  const sinceIso = since.toISOString();
+
+  // Query supabase: orders where created_at >= since
+  const { data, error } = await supabase.from('orders')
+    .select('*')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: true });
+
+  if(error){ alert('Gagal memuat laporan: '+error.message); return; }
+
+  // summary
+  const totalTransaksi = data.length;
+  const totalPendapatan = data.reduce((s, r) => s + Number(r.total||0), 0);
+
+  document.getElementById('reportTotalTransaksi').textContent = totalTransaksi;
+  document.getElementById('reportTotalPendapatan').textContent = totalPendapatan.toLocaleString('id-ID');
+
+  // table
+  const tbody = document.getElementById('reportTableBody');
+  tbody.innerHTML = '';
+  data.slice().reverse().forEach(rp => {
+    tbody.innerHTML += `<tr>
+      <td>#${rp.id}</td>
+      <td>${rp.created_at}</td>
+      <td>${escapeHtml(rp.customer_name||'-')}</td>
+      <td>Rp ${Number(rp.total||0).toLocaleString('id-ID')}</td>
+      <td>${escapeHtml(rp.status||'')}</td>
+    </tr>`;
+  });
+
+  // chart: group by date
+  const map = {};
+  data.forEach(r=>{
+    const d = new Date(r.created_at).toLocaleDateString('id-ID');
+    map[d] = (map[d]||0) + Number(r.total||0);
+  });
+  const labels = Object.keys(map);
+  const values = labels.map(l=>map[l]);
+
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  if(salesChart) salesChart.destroy();
+  salesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Pendapatan (Rp)',
+        data: values,
+        tension: 0.25,
+        fill: true,
+        backgroundColor: 'rgba(52,152,219,0.12)',
+        borderColor: 'rgba(52,152,219,1)',
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { callback: val => Number(val).toLocaleString('id-ID') } }
+      }
+    }
+  });
+}
+
+/* -------------------------
+   Helpers & Init
+------------------------- */
+function escapeHtml(str){
+  if(str === null || str === undefined) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* init loads */
+window.addEventListener('load', ()=>{
+  loadProducts();
+  loadPromos();
+  loadOrders();
+  loadReport();
+});
+
+/* Search/filter bindings */
+document.getElementById('searchOrder').addEventListener('input', ()=> renderOrdersTable(currentOrders));
+document.getElementById('filterStatus').addEventListener('change', ()=> renderOrdersTable(currentOrders));
+
+/* Modal close on backdrop click */
+document.querySelectorAll('.modal-backdrop').forEach(m=>{
+  m.addEventListener('click', (e)=> { if(e.target === m) m.style.display='none'; });
+});
 </script>
 
 </body>
