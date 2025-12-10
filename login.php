@@ -121,11 +121,12 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     window.location.href = "admin/admin.php";
   } else {
     alert("Login Berhasil!");
-    window.location.href = "Menu.html";
+    window.location.href = "customer/menu.html";
   }
 });
 </script>
 
 </body>
 </html>
+
 
