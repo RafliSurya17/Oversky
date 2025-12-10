@@ -94,39 +94,32 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-// 🟦 INISIALISASI SUPABASE
-const supabaseUrl = "https://YOUR_PROJECT_URL.supabase.co";
-const supabaseKey = "YOUR_ANON_KEY";
+const supabaseUrl = "https://YOUR_PROJECT_ID.supabase.co";
+const supabaseKey = "YOUR_PUBLIC_ANON_KEY";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// 🟦 LOGIN FUNCTION
-document.getElementById("login-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
-  // 🔍 Cek user di tabel Supabase (misal tabel `users`)
-  const { data, error } = await supabaseClient
-    .from("users")
-    .select("*")
-    .eq("email", email)
-    .eq("password", password)
-    .single();
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
 
-  if (error || !data) {
+  if (error) {
     alert("Email atau password salah!");
+    console.log(error);
     return;
   }
 
-  // Jika admin
-  if (data.role === "admin") {
+  // cek jika email admin
+  if (email === "rafiisurya17@gmail.com") {
     alert("Login Admin Berhasil!");
     window.location.href = "admin/admin.php";
-  } 
-
-  // Jika user biasa
-  else {
+  } else {
     alert("Login Berhasil!");
     window.location.href = "Menu.html";
   }
@@ -135,3 +128,4 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
 
 </body>
 </html>
+
