@@ -369,93 +369,32 @@
     }
 
     // Register Form Handling
-    document.getElementById('register-form').addEventListener('submit', function (event) {
-      event.preventDefault(); // Prevent page reload
+// Ganti bagian form submit handler
+document.getElementById('register-form').addEventListener('submit', function (event) {
+    event.preventDefault();
 
-      const usernameInput = document.getElementById('register-username');
-      const emailInput = document.getElementById('register-email');
-      const passwordInput = document.getElementById('register-password');
-      const confirmPasswordInput = document.getElementById('confirm-password');
+    const formData = new FormData();
+    formData.append("username", document.getElementById("register-username").value);
+    formData.append("email", document.getElementById("register-email").value);
+    formData.append("password", document.getElementById("register-password").value);
 
-      // Reset invalid class
-      usernameInput.classList.remove('invalid');
-      emailInput.classList.remove('invalid');
-      passwordInput.classList.remove('invalid');
-      confirmPasswordInput.classList.remove('invalid');
-
-      const username = usernameInput.value.trim();
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-      const confirmPassword = confirmPasswordInput.value.trim();
-
-      let isValid = true;
-
-      if (username === '') {
-        usernameInput.classList.add('invalid');
-        isValid = false;
-      }
-      if (email === '') {
-        emailInput.classList.add('invalid');
-        isValid = false;
-      }
-      if (password === '') {
-        passwordInput.classList.add('invalid');
-        isValid = false;
-      }
-      if (confirmPassword === '') {
-        confirmPasswordInput.classList.add('invalid');
-        isValid = false;
-      }
-
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (email !== '' && !emailPattern.test(email)) {
-        emailInput.classList.add('invalid');
-        isValid = false;
-      }
-
-      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      if (password !== '' && !passwordPattern.test(password)) {
-        passwordInput.classList.add('invalid');
-        isValid = false;
-      }
-
-      if (password !== confirmPassword) {
-        passwordInput.classList.add('invalid');
-        confirmPasswordInput.classList.add('invalid');
-        showNotification('Passwords do not match.', 'error');
-        isValid = false;
-      }
-
-      if (isValid) {
-        // Check if email is already registered
-        const isExisting = users.some(user => user.email === email);
-        if (isExisting) {
-          showNotification('Email already registered!', 'error');
-          emailInput.classList.add('invalid');
-          return;
+    fetch("register.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === "success") {
+            alert("Registrasi berhasil!");
+            window.location.href = "login.html";
+        } else {
+            alert(result.message);
         }
-        
-        // Add new user to array
-        users.push({
-          username,
-          email,
-          password
-        });
-        
-        // Simpan data pengguna ke localStorage
-        localStorage.setItem('registeredUsers', JSON.stringify(users));
-
-        showNotification('Registration successful! Redirecting to login page...');
-        document.getElementById('register-form').reset();
-        
-        // Redirect to login.html after successful registration
-        setTimeout(() => {
-            window.location.href = 'login.html'; 
-        }, 1500); // Redirect after 1.5 seconds
-      } else {
-        showNotification('Please fill in all fields correctly for registration.', 'error');
-      }
+    })
+    .catch(() => {
+        alert("Gagal menghubungi server!");
     });
+});
 
     // Remove invalid class when user starts typing for register form
     document.getElementById('register-username').addEventListener('input', function() {

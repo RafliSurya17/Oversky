@@ -4,34 +4,18 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Oversky - Login</title>
+
 <style>
-  /* Anda bisa menyertakan semua CSS yang relevan dari index.html di sini,
-     atau membuat file CSS terpisah dan menautkannya.
-     Untuk kesederhanaan, saya akan menyertakan CSS yang paling relevan. */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
+  *, *::before, *::after { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: 'Inter', sans-serif, Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: #000;
     color: #fff;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-  }
-
-  a {
-    color: #fff;
-    text-decoration: none;
-  }
-  a:hover,
-  a:focus {
-    text-decoration: underline;
   }
 
   .sign-in-section {
@@ -40,204 +24,106 @@
     border-radius: 16px;
     padding: 2rem;
     max-width: 400px;
+    width: 90%;
     box-shadow: 0 8px 24px rgba(255 255 255 / 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 90%; /* Make it responsive */
   }
 
-  .sign-in-section h3 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
+  h3 {
     text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
   }
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
+  .form-group { margin-bottom: 1rem; }
 
-  label {
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
+  label { font-weight: 600; }
 
-  input[type="text"],
-  input[type="password"],
-  input[type="email"] {
+  input {
+    width: 100%;
     padding: 0.75rem 1rem;
     border-radius: 12px;
     border: none;
-    font-size: 1rem;
-    background-color: rgba(255 255 255 / 0.07);
-    color: #fff;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    outline-offset: 2px;
-  }
-
-  input[type="text"]::placeholder,
-  input[type="password"]::placeholder,
-  input[type="email"]::placeholder {
-    color: #aaa;
-  }
-
-  input[type="text"]:focus,
-  input[type="password"]:focus,
-  input[type="email"]:focus {
-    background-color: rgba(255 255 255 / 0.15);
-    outline: 2px solid #fff;
-    color: #fff;
-  }
-
-  input.invalid {
-    border: 2px solid red !important;
-    outline: none !important;
+    background: rgba(255 255 255 / 0.07);
+    color: white;
   }
 
   .btn-submit {
-    background: #fff;
-    color: #000;
-    border: none;
-    padding: 0.85rem 1.75rem;
+    width: 100%;
+    padding: 0.85rem;
+    background: white;
+    color: black;
     font-weight: 700;
     border-radius: 12px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-    user-select: none;
-    margin-top: 0.5rem;
-    width: 100%; /* Make button full width */
   }
-  .btn-submit:hover,
-  .btn-submit:focus {
-    background-color: #ddd;
-    outline: none;
-  }
+
+  .btn-submit:hover { background: #ddd; }
 
   .back-to-home {
     display: block;
+    margin-top: 1rem;
     text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
+    color: white;
   }
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet" />
 </head>
+
 <body>
 
-<section class="sign-in-section" id="signin" aria-labelledby="signin-title" role="form" tabindex="-1">
-  <h3 id="signin-title">Sign in to Oversky</h3>
- 
+<section class="sign-in-section">
+  <h3>Sign in to Oversky</h3>
+
   <form id="login-form">
     <div class="form-group">
-      <label for="login-email">Email</label>
-      <input type="email" id="login-email" name="email" placeholder="Enter your email" required />
+      <label>Email</label>
+      <input type="email" id="login-email" name="email" required />
     </div>
 
     <div class="form-group">
-      <label for="login-password">Password</label>
-      <input type="password" id="login-password" name="password" 
-        placeholder="Enter your password" required
-        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-        title="Password minimal 8 karakter dan harus mengandung huruf serta angka" />
+      <label>Password</label>
+      <input type="password" id="login-password" name="password" required />
     </div>
 
     <button type="submit" class="btn-submit">Login</button>
   </form>
+
   <a href="index.html" class="back-to-home">Back to Home</a>
 </section>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Mengambil data pengguna dari localStorage
-    const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+document.getElementById("login-form").addEventListener("submit", function(event) {
+    event.preventDefault();
 
-    // Function to show a subtle notification
-    function showNotification(message, type = 'success') {
-      const notification = document.createElement('div');
-      notification.textContent = message;
-      notification.style.position = 'fixed';
-      notification.style.bottom = '20px';
-      notification.style.right = '20px';
-      notification.style.backgroundColor = type === 'success' ? 'rgba(0,255,0,0.8)' : 'rgba(255,0,0,0.8)';
-      notification.style.color = 'white';
-      notification.style.padding = '10px 20px';
-      notification.style.borderRadius = '5px';
-      notification.style.zIndex = '1000';
-      document.body.appendChild(notification);
+    const formData = new FormData();
+    formData.append("email", document.getElementById("login-email").value);
+    formData.append("password", document.getElementById("login-password").value);
 
-      setTimeout(() => {
-        notification.remove();
-      }, 3000); // Remove notification after 3 seconds
-    }
+    fetch("login.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
 
-    // Login Form Handling
-    document.getElementById('login-form').addEventListener('submit', function (event) {
-      event.preventDefault(); // Prevent page reload
-
-      const emailInput = document.getElementById('login-email');
-      const passwordInput = document.getElementById('login-password');
-
-      // Reset invalid class
-      emailInput.classList.remove('invalid');
-      passwordInput.classList.remove('invalid');
-
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      let isValid = true;
-
-      if (email === '') {
-        emailInput.classList.add('invalid');
-        isValid = false;
-      }
-      if (password === '') {
-        passwordInput.classList.add('invalid');
-        isValid = false;
-      }
-
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (email !== '' && !emailPattern.test(email)) {
-        emailInput.classList.add('invalid');
-        isValid = false;
-      }
-
-      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      if (password !== '' && !passwordPattern.test(password)) {
-        passwordInput.classList.add('invalid');
-        isValid = false;
-      }
-
-      if (isValid) {
-        // Check if email/password matches any registered user
-        const user = users.find(u => u.email === email && u.password === password);
-        
-        if (user) {
-          showNotification('Login successful!');
-          setTimeout(() => {
-              window.location.href = 'Menu.html'; // Redirect to Menu.html
-          }, 1000);
-        } else {
-          emailInput.classList.add('invalid');
-          passwordInput.classList.add('invalid');
-          showNotification('Invalid email or password', 'error');
+        if (data.status === "admin") {
+            alert("Login Admin Berhasil!");
+            window.location.href = "admin/admin.php"; // FIXED
         }
-      } else {
-        showNotification('Please fill in all fields correctly for login.', 'error');
-      }
-    });
+        else if (data.status === "success") {
+            alert("Login berhasil!");
+            window.location.href = "Menu.html"; // FIXED
+        }
+        else {
+            alert(data.message);
+        }
 
-    // Remove invalid class when user starts typing for login form
-    document.getElementById('login-email').addEventListener('input', function() {
-      this.classList.remove('invalid');
+    })
+    .catch(err => {
+        alert("Terjadi kesalahan server.");
+        console.log(err);
     });
-    document.getElementById('login-password').addEventListener('input', function() {
-      this.classList.remove('invalid');
-    });
-  });
+});
 </script>
+
 </body>
 </html>
