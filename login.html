@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Oversky - Login</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   body {
@@ -34,10 +36,6 @@
     font-size: 1.8rem;
   }
 
-  .form-group { margin-bottom: 1rem; }
-
-  label { font-weight: 600; }
-
   input {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -45,6 +43,7 @@
     border: none;
     background: rgba(255 255 255 / 0.07);
     color: white;
+    margin-bottom: 1rem;
   }
 
   .btn-submit {
@@ -57,82 +56,66 @@
     cursor: pointer;
   }
 
-  .btn-submit:hover {
-    background: #ddd;
-  }
-
-  .back-to-home {
-    display: block;
-    margin-top: 1rem;
-    text-align: center;
-    color: white;
-  }
+  .btn-submit:hover { background: #ddd; }
 </style>
-
 </head>
+
 <body>
 
 <section class="sign-in-section">
   <h3>Sign in to Oversky</h3>
 
-  <form id="login-form">
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" id="login-email" name="email" required />
-    </div>
-
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="login-password" name="password" required />
-    </div>
-
-    <button type="submit" class="btn-submit">Login</button>
-  </form>
-
-  <a href="index.html" class="back-to-home">Back to Home</a>
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button class="btn-submit" id="loginBtn">Login</button>
 </section>
 
-
-<!-- Supabase Client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-// =============================================
-// 1. KONFIGURASI SUPABASE (GANTI BAGIAN INI)
-// =============================================
+// ====== CONNECT TO SUPABASE ======
 const supabaseClient = supabase.createClient(
   "https://ryomejcknromjxtfcjhh.supabase.co",       // ← GANTI
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5b21lamNrbnJvbWp4dGZjamhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzODAxMDMsImV4cCI6MjA4MDk1NjEwM30.gRGbrsQ-0X5k0k2Wp4kISTCUKlK_kXC3abN-X3S8hWI"                       // ← GANTI
 );
 
-// =============================================
-// 2. FUNGSI LOGIN
-// =============================================
-document.getElementById("login-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  let email = document.getElementById("email").value;
+  let password = document.getElementById("password").value;
 
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
+  // LOGIN VIA SUPABASE AUTH
+  const { data: authData, error } = await supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
 
-    // Login via Supabase Auth
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
+  if (error) {
+    alert("Login gagal: " + error.message);
+    return;
+  }
 
-    if (error) {
-        alert("Login gagal: " + error.message);
-        return;
-    }
+  // CEK ROLE USER DI TABLE users
+  const { data: userRows } = await supabaseClient
+    .from("users")
+    .select("role")
+    .eq("email", email)
+    .single();
 
-    // Jika login sukses
-    alert("Login berhasil!");
+  if (!userRows) {
+    alert("Akun tidak ditemukan dalam tabel users!");
+    return;
+  }
 
-    // Redirect ke dashboard (ubah jika perlu)
+  let role = userRows.role;
+
+  // REDIRECT BERDASARKAN ROLE
+  if (role === "admin") {
+    alert("Selamat datang Admin!");
+    window.location.href = "admin/admin.html"; 
+  } else {
+    alert("Login pelanggan berhasil!");
     window.location.href = "customer/menu.html";
+  }
 });
 </script>
 
 </body>
 </html>
-
